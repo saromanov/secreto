@@ -1,0 +1,2 @@
+# secreto
+Store of secrets
