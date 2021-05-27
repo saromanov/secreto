@@ -48,6 +48,7 @@ func (s *rest) Run(ctx context.Context, ready func()) error {
 	api := s.srv.Group("/api")
 	api.Get("/secrets", handler.GetSecret(ctx, s.st))
 	api.Post("/secrets", handler.CreateSecret(ctx, s.st))
+	logger.WithField("address", ":8089").Info("Start listening")
 	if err := s.srv.Listen(":8089"); err != nil {
 		if errors.Is(err, http.ErrServerClosed) {
 			return nil
@@ -55,7 +56,6 @@ func (s *rest) Run(ctx context.Context, ready func()) error {
 		logger.WithError(err).Error("Failed start listening")
 		return err
 	}
-	logger.WithField("address", ":8089").Info("Start listening")
 	defer func() {
 		logger.Info("Stop listening")
 	}()

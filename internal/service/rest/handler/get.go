@@ -11,7 +11,7 @@ import (
 // GetSecret provides getting of the secret
 func GetSecret(ctx context.Context, db storage.Storage) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		key := c.Params("key")
+		key := c.Query("key")
 		if key == "" {
 			return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "true", "message": "key is not defined"})
 		}
