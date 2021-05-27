@@ -6,7 +6,6 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/apex/log"
 	"github.com/oklog/run"
 	"github.com/sirupsen/logrus"
 
@@ -18,6 +17,8 @@ import (
 
 func main() {
 	logger := logrus.New()
+	logger.Level = logrus.DebugLevel
+	logger.Formatter = &logrus.JSONFormatter{}
 	ctx, cancel := context.WithCancel(context.Background())
 	g := &run.Group{}
 	{
@@ -35,13 +36,13 @@ func main() {
 
 	st, err := badger.New(storage.Config{})
 	if err != nil {
-		log.WithError(err).Fatal("unable to init storage")
+		logger.WithError(err).Fatal("unable to init storage")
 	}
 	r := rest.New(st)
 
 	s := service.Runner{}
 	if err := s.SetupService(ctx, r, "rest", g); err != nil {
-		log.WithError(err).Fatal("unable to setup service ")
+		logger.WithError(err).Fatal("unable to setup service ")
 	}
 	logger.Info("Running of the service...")
 	if err := g.Run(); err != nil {

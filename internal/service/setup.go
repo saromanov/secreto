@@ -14,7 +14,7 @@ type Runner struct {
 
 // SetupService provides setup of the service
 func (o *Runner) SetupService(ctx context.Context, srv Service, role string, g *run.Group) error {
-	logger := log.New()
+	logger := log.WithContext(ctx)
 	chPrev := o.prev
 	chNext := make(chan struct{})
 	var once sync.Once
