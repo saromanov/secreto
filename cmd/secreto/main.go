@@ -8,6 +8,9 @@ import (
 
 	"github.com/oklog/run"
 	"github.com/sirupsen/logrus"
+	"github.com/joeshaw/envdecode"
+	_ "github.com/joho/godotenv/autoload"
+
 
 	"github.com/saromanov/secreto/internal/service"
 	"github.com/saromanov/secreto/internal/service/rest"
@@ -15,7 +18,17 @@ import (
 	"github.com/saromanov/secreto/internal/storage/badger"
 )
 
+type config struct {
+	Storage storage.Config
+	Rest rest.Config
+
+}
+
 func main() {
+	var cfg config
+	if err := envdecode.StrictDecode(&cfg); err != nil {
+		logrus.WithError(err).Fatal("Cannot decode config envs")
+	}
 	logger := logrus.New()
 	logger.Level = logrus.DebugLevel
 	logger.Formatter = &logrus.JSONFormatter{}
@@ -34,11 +47,11 @@ func main() {
 		})
 	}
 
-	st, err := badger.New(storage.Config{})
+	st, err := badger.New(cfg.Storage)
 	if err != nil {
 		logger.WithError(err).Fatal("unable to init storage")
 	}
-	r := rest.New(st)
+	r := rest.New(cfg.Rest,st)
 
 	s := service.Runner{}
 	if err := s.SetupService(ctx, r, "rest", g); err != nil {

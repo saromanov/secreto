@@ -3,6 +3,7 @@ package rest
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -14,14 +15,17 @@ import (
 )
 
 type rest struct {
+	cfg Config
 	srv *fiber.App
-	st storage.Storage
+	st  storage.Storage
 }
 
-func New(st storage.Storage) service.Service {
+// New provides initialization of the rest service
+func New(cfg Config, st storage.Storage) service.Service {
 	return &rest{
+		cfg: cfg,
 		srv: newFiber(),
-		st: st,
+		st:  st,
 	}
 }
 
@@ -48,8 +52,8 @@ func (s *rest) Run(ctx context.Context, ready func()) error {
 	api := s.srv.Group("/api")
 	api.Get("/secrets", handler.GetSecret(ctx, s.st))
 	api.Post("/secrets", handler.CreateSecret(ctx, s.st))
-	logger.WithField("address", ":8089").Info("Start listening")
-	if err := s.srv.Listen(":8089"); err != nil {
+	logger.WithField("address", s.cfg.Port).Info("Start listening")
+	if err := s.srv.Listen(fmt.Sprintf(":%d", s.cfg.Port)); err != nil {
 		if errors.Is(err, http.ErrServerClosed) {
 			return nil
 		}
