@@ -15,9 +15,9 @@ type store struct {
 
 // New provides initialization for badger
 func New(cfg storage.Config) (storage.Storage, error) {
-	opts := badger.DefaultOptions("/tmp/badger")
-	opts.EncryptionKey = []byte("test")
-	db, err := badger.Open(badger.DefaultOptions("/tmp/badger"))
+	opts := badger.DefaultOptions(cfg.Path)
+	opts.EncryptionKey = []byte(cfg.EncryptionKey)
+	db, err := badger.Open(badger.DefaultOptions(cfg.Path))
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to open badger")
 	}
