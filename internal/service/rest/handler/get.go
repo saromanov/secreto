@@ -9,7 +9,7 @@ import (
 )
 
 // GetSecret provides getting of the secret
-func GetSecret(ctx context.Context, db storage.Storage) fiber.Handler {
+func GetSecret(ctx context.Context, secret string, db storage.Storage) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		key := c.Query("key")
 		if key == "" {

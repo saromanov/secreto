@@ -10,7 +10,7 @@ import (
 )
 
 // CreateSecret provides creating of the secret
-func CreateSecret(ctx context.Context, db storage.Storage) fiber.Handler {
+func CreateSecret(ctx context.Context, secret string, db storage.Storage) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		secret := new(models.SecretRESTPost)
 		if err := c.BodyParser(&secret); err != nil {
