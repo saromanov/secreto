@@ -23,13 +23,9 @@ func Encrypt(stringToEncrypt string, secret string) (string, error) {
 		return "", errors.New("encrypt string is not defined")
 	}
 	
-	key, err := hex.DecodeString(secret)
-	if err != nil {
-	   return "", errors.Wrap(err, "unable to decode string")
-	}
 	plaintext := []byte(stringToEncrypt)
 
-	block, err := aes.NewCipher(key)
+	block, err := aes.NewCipher([]byte(secret))
 	if err != nil {
 		return "", errors.Wrap(err, "unable to apply new cipher")
 	}
@@ -49,15 +45,10 @@ func Encrypt(stringToEncrypt string, secret string) (string, error) {
 }
 
 // Decrypt provides decryption of the key
-func Decrypt(encryptedString string, keyString string) (string, error) {
-
-	key, err := hex.DecodeString(keyString)
-	if err != nil {
-	    return "", errors.Wrap(err, "unable to decode string")
-	}
+func Decrypt(encryptedString string, secret string) (string, error) {
 	enc, err := hex.DecodeString(encryptedString)
 
-	block, err := aes.NewCipher(key)
+	block, err := aes.NewCipher([]byte(secret))
 	if err != nil {
 		return "", errors.Wrap(err, "unable to apply new cipher")
 	}
@@ -72,7 +63,7 @@ func Decrypt(encryptedString string, keyString string) (string, error) {
 
 	plaintext, err := aesGCM.Open(nil, nonce, ciphertext, nil)
 	if err != nil {
-		panic(err.Error())
+		return "", errors.Wrap(err, "unable to decode data")
 	}
 
 	return fmt.Sprintf("%s", plaintext), nil
