@@ -7,10 +7,11 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/saromanov/secreto/internal/models"
 	"github.com/saromanov/secreto/internal/storage"
+	"github.com/saromanov/secreto/internal/crypto"
 )
 
 // CreateSecret provides creating of the secret
-func CreateSecret(ctx context.Context, secret string, db storage.Storage) fiber.Handler {
+func CreateSecret(ctx context.Context, secretKey string, db storage.Storage) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		secret := new(models.SecretRESTPost)
 		if err := c.BodyParser(&secret); err != nil {
@@ -20,9 +21,13 @@ func CreateSecret(ctx context.Context, secret string, db storage.Storage) fiber.
 			return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "true", "message": err.Error()})
 		}
 
+		result, err := crypto.Encrypt(secret.Value, secretKey)
+		if err != nil {
+			return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "true", "message": err.Error()})
+		}
 		if err := db.CreateSecret(ctx, models.Secret{
 			Key: secret.Key,
-			Value: secret.Value,
+			Value: result,
 		}); err != nil {
 			return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": "true", "message": err.Error()})
 		}

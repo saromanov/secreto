@@ -1,5 +1,8 @@
 package crypto
 
+// Попробовать сделать монолит а внутри микросервисы
+// внутри несколько серверов
+
 import (
 	"crypto/aes"
 	"crypto/cipher"
@@ -12,9 +15,15 @@ import (
 )
 
 // Encrypt provides encryption of the key
-func Encrypt(stringToEncrypt string, keyString string) (string, error) {
-
-	key, err := hex.DecodeString(keyString)
+func Encrypt(stringToEncrypt string, secret string) (string, error) {
+	if secret == "" {
+		return "", errors.New("secret is not defined")
+	}
+	if stringToEncrypt == "" {
+		return "", errors.New("encrypt string is not defined")
+	}
+	
+	key, err := hex.DecodeString(secret)
 	if err != nil {
 	   return "", errors.Wrap(err, "unable to decode string")
 	}
