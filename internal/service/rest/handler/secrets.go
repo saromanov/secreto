@@ -2,14 +2,15 @@ package handler
 
 import (
 	"context"
-
+	"strings"
 	"github.com/gofiber/fiber/v2"
-	"github.com/saromanov/secreto/internal/storage"
+	"github.com/google/uuid"
 )
 
-// GenerateSecret provides generation of teh secrets
-func GenerateSecret(ctx context.Context, secretKey string, db storage.Storage) fiber.Handler {
+// GenerateSecretKey provides generation of the secrets
+func GenerateSecretKey(ctx context.Context) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		return c.JSON(fiber.Map{"error": "false", "result": "ok"})
+		result := strings.Replace(uuid.New().String(), "-", "", -1)
+		return c.JSON(fiber.Map{"error": "false", "result": result})
 	}
 }

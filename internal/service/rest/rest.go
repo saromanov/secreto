@@ -51,6 +51,7 @@ func (s *rest) Run(ctx context.Context, ready func()) error {
 	logger := log.WithContext(ctx)
 	api := s.srv.Group("/api")
 	api.Get("/secrets", handler.GetSecret(ctx, s.cfg.Secret, s.st))
+	api.Get("/keys", handler.GenerateSecretKey(ctx))
 	api.Post("/secrets", handler.CreateSecret(ctx, s.cfg.Secret, s.st))
 	logger.WithField("address", s.cfg.Port).Info("Start listening")
 	if err := s.srv.Listen(fmt.Sprintf(":%d", s.cfg.Port)); err != nil {
