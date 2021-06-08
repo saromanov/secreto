@@ -17,7 +17,7 @@ import (
 // Encrypt provides encryption of the key
 func Encrypt(stringToEncrypt string, secret string) (string, error) {
 	if secret == "" {
-		return "", errors.New("secret is not defined")
+		return "", errors.New("secret key is not defined")
 	}
 	if stringToEncrypt == "" {
 		return "", errors.New("encrypt string is not defined")
