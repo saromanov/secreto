@@ -48,4 +48,5 @@ func TestGetSecret(t *testing.T) {
 	res, err = s.GetSecret(ctx, "keya")
 	assert.Error(t, err)
 	assert.Equal(t, "", res.Value)
+	assert.NoError(t, os.RemoveAll("/tmp/test1"))
 }
