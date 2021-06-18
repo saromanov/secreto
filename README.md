@@ -1,6 +1,9 @@
 # secreto
 Store of secrets
 
+## Environment variables
+
+`REST_SECRET` - 32 symbol of the secret key
 
 
 ## API

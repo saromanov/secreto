@@ -2,6 +2,7 @@ package badger
 
 import (
 	"context"
+	"fmt"
 
 	badger "github.com/dgraph-io/badger/v3"
 	"github.com/pkg/errors"
@@ -28,8 +29,11 @@ func New(cfg storage.Config) (storage.Storage, error) {
 
 func (d *store) CreateSecret(ctx context.Context, secret models.Secret) error {
 	err := d.db.Update(func(txn *badger.Txn) error {
-		err := txn.Set([]byte(secret.Key), []byte(secret.Value))
-		return err
+		item, _ := txn.Get([]byte(secret.Key))
+		if item != nil {
+			return fmt.Errorf("key %s already exists ", secret.Key)
+		}
+		return txn.Set([]byte(secret.Key), []byte(secret.Value))
 	})
 	if err != nil {
 		return errors.Wrap(err, "unable to set data")
