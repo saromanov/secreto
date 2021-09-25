@@ -47,7 +47,9 @@ func Encrypt(stringToEncrypt string, secret string) (string, error) {
 // Decrypt provides decryption of the key
 func Decrypt(encryptedString string, secret string) (string, error) {
 	enc, err := hex.DecodeString(encryptedString)
-
+	if err != nil {
+		return "", errors.Wrap(err, "unable to decode string")
+	}
 	block, err := aes.NewCipher([]byte(secret))
 	if err != nil {
 		return "", errors.Wrap(err, "unable to apply new cipher")

@@ -68,6 +68,10 @@ func (s *rest) Run(ctx context.Context, ready func()) error {
 	return nil
 }
 
+// Shutdown provides shotdown of the service
 func (s *rest) Shutdown(ctx context.Context) error {
+	if err := s.srv.Shutdown(); err != nil {
+		return fmt.Errorf("unable to shutdown service: %v", err)
+	}
 	return nil
 }

@@ -6,11 +6,10 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/oklog/run"
-	"github.com/sirupsen/logrus"
 	"github.com/joeshaw/envdecode"
 	_ "github.com/joho/godotenv/autoload"
-
+	"github.com/oklog/run"
+	"github.com/sirupsen/logrus"
 
 	"github.com/saromanov/secreto/internal/service"
 	"github.com/saromanov/secreto/internal/service/rest"
@@ -20,8 +19,7 @@ import (
 
 type config struct {
 	Storage storage.Config
-	Rest rest.Config
-
+	Rest    rest.Config
 }
 
 func main() {
@@ -51,7 +49,7 @@ func main() {
 	if err != nil {
 		logger.WithError(err).Fatal("unable to init storage")
 	}
-	r := rest.New(cfg.Rest,st)
+	r := rest.New(cfg.Rest, st)
 
 	s := service.Runner{}
 	if err := s.SetupService(ctx, r, "rest", g); err != nil {
